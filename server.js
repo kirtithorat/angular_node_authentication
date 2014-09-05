@@ -4,6 +4,12 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var configDB = require('./config/database.js');
+var bcrypt = require('bcryptjs');
+
+// models
+var User = require('./models/User').User;
 
 var app = express();
 
@@ -15,11 +21,12 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+mongoose.connect(configDB.url);
+
 // To fix Cannot GET /route on hitting Refresh with Angular
 app.get('*', function(req, res) {
     res.redirect('/#' + req.originalUrl);
 });
-
 
 app.use(function(err, req, res, next) {
     console.error(err.stack);
