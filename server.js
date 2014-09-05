@@ -7,11 +7,15 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var configDB = require('./config/database.js');
 var bcrypt = require('bcryptjs');
+var passport = require('passport');
 
 // models
 var User = require('./models/User').User;
 
 var app = express();
+
+mongoose.connect(configDB.url);
+require('./config/passport')(passport);
 
 app.set('port', process.env.PORT || 3000);
 app.use(favicon());
@@ -19,9 +23,17 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect(configDB.url);
+//passport
+app.use(session({
+    secret: 'letsdosomenodeauthentication',
+    name: 'operator'
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // To fix Cannot GET /route on hitting Refresh with Angular
 app.get('*', function(req, res) {
