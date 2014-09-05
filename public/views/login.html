@@ -1,0 +1,30 @@
+<h2>Login</h2>
+<form
+  name="login_form"
+  role="form"
+  ng-submit="login()">
+  <div>
+    <label for="login.email">Email address</label>
+    <input type="email"
+    placeholder="johndoe@example.com"
+    name="login.email"
+    ng-model="login.email"
+    required>
+  </div>
+  <div>
+    <label for="login.password">Password</label>
+    <input type="password"
+    placeholder="Password"
+    name="login.password"
+    ng-model="login.password"
+    required>
+  </div>
+  <div>
+    <button type="submit">Login</button>
+  </div>
+</form>
+<div ng-if="login.errors">
+  <h2>{{login.errors}}</h2>
+</div>
+
+New Customer? <a href="/signup"> Sign Up Today</a>
