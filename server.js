@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var configDB = require('./config/database.js');
 var bcrypt = require('bcryptjs');
 var passport = require('passport');
+var session = require('express-session');
 
 // models
 var User = require('./models/User').User;
