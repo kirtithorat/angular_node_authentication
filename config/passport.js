@@ -29,7 +29,9 @@ module.exports = function(passport) {
                     return done(err);
 
                 if (user) {
-                    return done(null, false, req.flash('signupMessage', 'Email is already taken'));
+                    return done(null, false, {
+                        signupMessage: 'Email is already taken'
+                    });
                 } else {
 
                     var newUser = new User();
@@ -50,25 +52,30 @@ module.exports = function(passport) {
     passport.use('local-login', new LocalStrategy({
             usernameField: 'email',
             passwordField: 'password',
-            passReqToCallback: true 
+            passReqToCallback: true
         },
-        function(req, email, password, done) { 
-
+        function(req, email, password, done) {
+            console.log("I am here");
             User.findOne({
                 email: email
             }, function(err, user) {
                 if (err)
                     return done(err);
-
+                console.log("********user:"+user)
                 if (!user)
-                    return done(null, false, req.flash('loginMessage', 'User does not exists')); 
-
+                    return done(null, false, {
+                        loginMessage: 'User does not exists'
+                    });
+                console.log("*******!user.validPassword(password):"+user.validPassword(password));
                 if (!user.validPassword(password))
-                    return done(null, false, req.flash('loginMessage', 'Incorrect Password')); 
+                    return done(null, false, {
+                        loginMessage: 'Incorrect Password'
+                    });
 
-                return done(null, user, req.flash('loginMessage', 'Login Successful'));
+                return done(null, user, {
+                    loginMessage: 'Login Successful'
+                });
             });
 
         }));
-
 };

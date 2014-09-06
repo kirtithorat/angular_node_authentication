@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var configDB = require('./config/database.js');
-var bcrypt = require('bcryptjs');
 var passport = require('passport');
 var session = require('express-session');
 
@@ -27,14 +26,28 @@ app.use(cookieParser());
 
 //passport
 app.use(session({
-    secret: 'letsdosomenodeauthentication',
-    name: 'operator'
+    secret: 'letsdosomenodeauthentication'
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.post('/api/login', passport.authenticate('local-login'), function(req, res) {
+    res.cookie('user', JSON.stringify(req.user));
+    res.send(req.user); // Always req.user and NOT req.member or req.operator (not based on model name)
+});
+
+app.post('/api/signup', passport.authenticate('local-signup'), function(req, res) {
+    res.cookie('user', JSON.stringify(req.user));
+    res.send(req.user); // req.user and NOT req.operator
+});
+
+app.get('/api/logout', function(req, res, next) {
+    req.logout();
+    res.send(200);
+});
 
 // To fix Cannot GET /route on hitting Refresh with Angular
 app.get('*', function(req, res) {
