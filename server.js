@@ -34,15 +34,24 @@ app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Local Strategy Routes
 app.post('/api/login', passport.authenticate('local-login'), function(req, res) {
     res.cookie('user', JSON.stringify(req.user));
     res.send(req.user); // Always req.user and NOT req.member or req.operator (not based on model name)
 });
 
+
 app.post('/api/signup', passport.authenticate('local-signup'), function(req, res) {
     res.cookie('user', JSON.stringify(req.user));
     res.send(req.user); // req.user and NOT req.operator
 });
+
+// Google Strategy Routes
+app.get('/auth/google/', passport.authenticate('google', { scope : ['profile', 'email'] }));
+
+// the callback after google has authenticated the user
+app.get('/google/oauth2callback/',
+    passport.authenticate('google'));
 
 app.get('/api/logout', function(req, res, next) {
     req.logout();
@@ -62,5 +71,5 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(app.get('port'), function() {
-  console.log('Express server started listening on port ' + app.get('port'));
+    console.log('Express server started listening on port ' + app.get('port'));
 });

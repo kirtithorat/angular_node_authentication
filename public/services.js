@@ -44,16 +44,30 @@ angular.module('nAuthApp.services', [])
 
         this.login = function(params) {
             var d = $q.defer();
-            $http.post('/api/login', params)
-                .success(function(data) {
-                    var user = data;
-                    AuthService.setCurrentUser(user);
-                    d.resolve(user);
-                })
-                .error(function(reason) {
-                    d.reject(reason);
-                });
-            return d.promise;
+            if (params.provider) {
+                $http.get('/auth/'+params.provider)
+                    .success(function(data) {
+                        var user = data;
+                        AuthService.setCurrentUser(user);
+                        d.resolve(user);
+                    })
+                    .error(function(reason) {
+                        d.reject(reason);
+                    });
+                return d.promise;
+
+            } else {
+                $http.post('/api/login', params)
+                    .success(function(data) {
+                        var user = data;
+                        AuthService.setCurrentUser(user);
+                        d.resolve(user);
+                    })
+                    .error(function(reason) {
+                        d.reject(reason);
+                    });
+                return d.promise;
+            }
         };
 
         this.logout = function() {

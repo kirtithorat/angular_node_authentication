@@ -1,6 +1,8 @@
 var LocalStrategy = require('passport-local').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuthStrategy;
 
 var User = require('../models/User').User;
+var secret = require('./secret');
 
 module.exports = function(passport) {
     // serialize the user
@@ -15,6 +17,7 @@ module.exports = function(passport) {
         });
     });
 
+    // Local Strategy Sign Up
     passport.use('local-signup', new LocalStrategy({
             usernameField: 'email',
             passwordField: 'password',
@@ -36,8 +39,8 @@ module.exports = function(passport) {
 
                     var newUser = new User();
 
-                    newUser.email = email;
-                    newUser.password = newUser.generateHash(password);
+                    newUser.local.email = email;
+                    newUser.local.password = newUser.generateHash(password);
 
                     newUser.save(function(err) {
                         if (err)
@@ -49,24 +52,22 @@ module.exports = function(passport) {
             });
         }));
 
+    // Local Strategy Log In
     passport.use('local-login', new LocalStrategy({
             usernameField: 'email',
             passwordField: 'password',
             passReqToCallback: true
         },
         function(req, email, password, done) {
-            console.log("I am here");
             User.findOne({
                 email: email
             }, function(err, user) {
                 if (err)
                     return done(err);
-                console.log("********user:"+user)
                 if (!user)
                     return done(null, false, {
                         loginMessage: 'User does not exists'
                     });
-                console.log("*******!user.validPassword(password):"+user.validPassword(password));
                 if (!user.validPassword(password))
                     return done(null, false, {
                         loginMessage: 'Incorrect Password'
@@ -78,4 +79,38 @@ module.exports = function(passport) {
             });
 
         }));
-};
+
+    passport.use(new GoogleStrategy({
+                consumerKey: secret.googleOAuth.clientId,
+                consumerSecret: secret.googleOAuth.clientSecret,
+                callbackURL: secret.googleOAuth.callbackUrl
+            },
+            function(token, tokenSecret, profile, done) {
+                process.nextTick(function() {
+                        User.findOne({
+                            googleId: profile.id
+                        }, function(err, user) {
+                            if (err)
+                                return done(err);
+
+                            if (user) {
+                                return done(null, user);
+                            } else {
+                                var newUser = new User();
+
+                                newUser.google.id = profile.id;
+                                newUser.google.token = token;
+                                newUser.google.email = profile.emails[0].value; // pull the first email
+
+                                newUser.save(function(err) {
+                                    if (err)
+                                        throw err;
+                                    return done(null, newUser);
+                                });
+                                return done(err, user);
+                            };
+                        });
+                    });
+                }
+            ));
+    };

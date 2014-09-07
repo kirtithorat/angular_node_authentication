@@ -7,6 +7,10 @@ angular.module('nAuthApp', [
         $locationProvider.html5Mode(true);
 
         $routeProvider
+            .when('/auth/:provider', {
+                templateUrl: 'views/dashboard.html',
+                controller: 'OAuthController'
+            })
             .when('/dashboard', {
                 templateUrl: 'views/dashboard.html',
                 controller: 'DashboardController'
@@ -76,4 +80,16 @@ angular.module('nAuthApp', [
                     $scope.login.errors = reason;
                 });
         };
+    })
+    .controller('OAuthController', function($routeParams, $location, UserService) {
+
+        UserService.login({
+            provider: $routeParams.provider,
+        })
+            .then(function(user) {
+                $location.path('/dashboard');
+            }, function(reason) {
+                $location.path('/');
+            });
+
     });
