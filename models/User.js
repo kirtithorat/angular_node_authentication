@@ -23,6 +23,16 @@ var userSchema = new mongoose.Schema({
                 unique: true
             }
         }
+    },
+    facebook: {
+        id: String,
+        token: String,
+        email: {
+            type: String,
+            index: {
+                unique: true
+            }
+        }
     }
 });
 

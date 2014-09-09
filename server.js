@@ -47,9 +47,11 @@ app.post('/api/signup', passport.authenticate('local-signup'), function(req, res
 });
 
 // Google Strategy Routes
-app.get('/auth/google/', passport.authenticate('google', { scope : ['profile', 'email'] }));
+app.get('/auth/google/', passport.authenticate('google', {
+    scope: ['profile', 'email']
+}));
 
-// the callback after google has authenticated the user
+// callback after google has authenticated the user
 app.get('/google/oauth2callback/',
     passport.authenticate('google'));
 
@@ -57,6 +59,15 @@ app.get('/api/logout', function(req, res, next) {
     req.logout();
     res.send(200);
 });
+
+// Facebook Strategy Routes
+app.get('/auth/facebook', passport.authenticate('facebook', {
+    scope: 'email'
+}));
+
+// callback after facebook has authenticated the user
+app.get('/auth/facebook/callback',
+    passport.authenticate('facebook'));
 
 // To fix Cannot GET /route on hitting Refresh with Angular
 app.get('*', function(req, res) {
