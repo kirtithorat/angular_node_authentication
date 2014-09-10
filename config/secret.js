@@ -10,5 +10,9 @@ module.exports = {
         'clientSecret': 'add-your-client-secret',
         'callbackURL': 'add-your-callback-url'
     },
-
+    'twitterOAuth': {
+        'clientId': 'add-your-secret-clientId',
+        'clientSecret': 'add-your-client-secret',
+        'callbackURL': 'add-your-callback-url'
+    }
 };

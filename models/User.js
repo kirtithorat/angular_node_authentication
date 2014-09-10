@@ -33,6 +33,16 @@ var userSchema = new mongoose.Schema({
                 unique: true
             }
         }
+    },
+    twitter: {
+        id: String,
+        token: String,
+        username: {
+            type: String,
+            index: {
+                unique: true
+            }
+        }
     }
 });
 

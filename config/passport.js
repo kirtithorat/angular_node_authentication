@@ -1,6 +1,7 @@
 var LocalStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuthStrategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
+var TwitterStrategy = require('passport-twitter').Strategy;
 
 var User = require('../models/User').User;
 var secret = require('./secret');
@@ -134,13 +135,13 @@ module.exports = function(passport) {
                         return done(err);
 
                     if (user) {
-                        return done(null, user); 
+                        return done(null, user);
                     } else {
                         var newUser = new User();
 
-                        newUser.facebook.id = profile.id;                   
-                        newUser.facebook.token = token;     
-                        newUser.facebook.email = profile.emails[0].value; 
+                        newUser.facebook.id = profile.id;
+                        newUser.facebook.token = token;
+                        newUser.facebook.email = profile.emails[0].value;
 
                         newUser.save(function(err) {
                             if (err)
@@ -154,4 +155,44 @@ module.exports = function(passport) {
             });
 
         }));
+
+    // Twitter Strategy Log In
+
+    passport.use(new TwitterStrategy({
+            consumerKey: secret.twitterOAuth.clientId,
+            consumerSecret: secret.twitterOAuth.clientSecret,
+            callbackURL: secret.twitterOAuth.callbackURL
+        },
+        function(token, tokenSecret, profile, done) {
+
+           process.nextTick(function() {
+
+                User.findOne({
+                    'twitter.id': profile.id
+                }, function(err, user) {
+
+                    if (err)
+                        return done(err);
+
+                    if (user) {
+                        return done(null, user); 
+                    } else {
+                        var newUser = new User();
+
+                        newUser.twitter.id = profile.id;
+                        newUser.twitter.token = token;
+                        newUser.twitter.username = profile.username;
+
+                        newUser.save(function(err) {
+                            if (err)
+                                throw err;
+                            return done(null, newUser);
+                        });
+                    }
+                });
+
+            });
+
+        }));
+
 };

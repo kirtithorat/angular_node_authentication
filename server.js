@@ -52,7 +52,7 @@ app.get('/auth/google/', passport.authenticate('google', {
 }));
 
 // callback after google has authenticated the user
-app.get('/google/oauth2callback/',
+app.get('/google/oauth2callback',
     passport.authenticate('google'));
 
 app.get('/api/logout', function(req, res, next) {
@@ -68,6 +68,13 @@ app.get('/auth/facebook', passport.authenticate('facebook', {
 // callback after facebook has authenticated the user
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook'));
+
+// Google Strategy Routes
+app.get('/auth/twitter', passport.authenticate('twitter'));
+
+// callback after google has authenticated the user
+app.get('/twitter/oauth2callback',
+    passport.authenticate('twitter'));
 
 // To fix Cannot GET /route on hitting Refresh with Angular
 app.get('*', function(req, res) {
