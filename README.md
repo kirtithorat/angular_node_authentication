@@ -1,6 +1,6 @@
-# Node Authentication
+# Angular Node Authentication
 
-"Node Authentication" is a simple Node application which uses `Express`, `AngularJS` and `MongoDB`(using `Mongoose`). It deals with providing a simple solution for user authentication using `Passport` and it covers local-authentication strategy and Google omiauth.
+"Angular Node Authentication" is a simple Node application which uses `Express`, `AngularJS` and `MongoDB`(using `Mongoose`). It deals with providing a simple solution for user authentication using `Passport` and it covers local-authentication strategy and Google omiauth.
 
 ## Stack
 
