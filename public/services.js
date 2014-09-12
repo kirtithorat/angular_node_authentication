@@ -45,7 +45,6 @@ angular.module('nAuthApp.services', [])
         this.login = function(params) {
             var d = $q.defer();
             if (params.provider) {
-                console.log("Login Plz*******");
                 $http.get('/auth/'+params.provider)
                     .success(function(data) {
                         var user = data;

@@ -32,6 +32,29 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(function(req, res, next) {
+
+    // Website you wish to allow to connect
+    res.header('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.header('Access-Control-Allow-Credentials', true);
+
+    // Request headers you wish to allow
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Access-Control-Allow-Origin');
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+        res.send(200);
+    } else {
+        next();
+    }
+
+
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Local Strategy Routes
@@ -60,14 +83,14 @@ app.get('/api/logout', function(req, res, next) {
     res.send(200);
 });
 
-// Facebook Strategy Routes
 app.get('/auth/facebook', passport.authenticate('facebook', {
     scope: 'email'
 }));
 
-// callback after facebook has authenticated the user
-app.get('/auth/facebook/callback',
+// handle the callback after facebook has authenticated the user
+app.get('/facebook/oauth2callback',
     passport.authenticate('facebook'));
+
 
 // Google Strategy Routes
 app.get('/auth/twitter', passport.authenticate('twitter'));
